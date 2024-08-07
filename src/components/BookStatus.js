@@ -4,8 +4,29 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import { Typography, Paper, Box, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  Box,
+  CircularProgress,
+  TableContainer,
+  Stack,
+} from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
+
+const MyNewTitle = ({ text, variant }) => (
+  <Typography
+    variant={variant}
+    style={{
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      fontSize: "0.6rem",
+    }}
+  >
+    {text}
+  </Typography>
+);
 
 const BookStatus = () => {
   const { books, loading } = useBooks();
@@ -15,23 +36,29 @@ const BookStatus = () => {
       {
         accessorFn: (row, index) => index + 1,
         header: "No",
-        size: 50,
+        size: 30,
       },
       {
         accessorKey: "id",
         header: "Book No",
-        size: 100,
+        size: 60, 
       },
       {
         accessorKey: "status",
         header: "Status",
-        size: 100,
+        size: 60, 
         Cell: ({ cell }) => (
           <Box display="flex" alignItems="center">
             <CircleIcon
-              style={{ color: cell.getValue() === "free" ? "blue" : "orange" }}
+              style={{
+                color: cell.getValue() === "free" ? "blue" : "orange",
+                fontSize: "0.6rem",
+              }}
             />
-            <Typography variant="body2" style={{ marginLeft: 8 }}>
+            <Typography
+              variant="body2"
+              style={{ marginLeft: 2, fontSize: "0.6rem" }}
+            >
               {cell.getValue()}
             </Typography>
           </Box>
@@ -40,14 +67,22 @@ const BookStatus = () => {
       {
         accessorKey: "owner.username",
         header: "Owner Name",
-        size: 150,
-        Cell: ({ cell }) => cell.getValue(),
+        size: 80,
+        Cell: ({ cell }) => (
+          <Typography style={{ fontSize: "0.6rem" }}>
+            {cell.getValue()}
+          </Typography>
+        ),
       },
       {
         accessorKey: "price",
         header: "Price",
-        size: 100,
-        Cell: ({ cell }) => `$${cell.getValue()}`, // Format price as currency
+        size: 30,
+        Cell: ({ cell }) => (
+          <Typography style={{ fontSize: "0.6rem" }}>
+            ${cell.getValue()}
+          </Typography>
+        ),
       },
     ],
     []
@@ -57,6 +92,29 @@ const BookStatus = () => {
     columns,
     data: books || [],
     enablePagination: false,
+    enableSorting: false,
+    enableDensityToggle: false,
+    enableFullScreenToggle: false,
+    initialState: { density: "spacious" },
+    options: {
+      density: "compact", 
+      tableLayout: "fixed", 
+      sx: {
+        "& .MuiTable-root": {
+          fontSize: "0.6rem", 
+        },
+        "& .MuiTableCell-root": {
+          padding: "2px",
+          borderBottom: "1px solid #ddd",
+        },
+        "& .MuiTypography-root": {
+          fontSize: "0.6rem", 
+        },
+        "& .MuiSvgIcon-root": {
+          fontSize: "0.6rem", 
+        },
+      },
+    },
   });
 
   if (loading) {
@@ -73,14 +131,9 @@ const BookStatus = () => {
   }
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
-      <Paper>
-        <Typography variant="h6" component="h2" gutterBottom>
-          Books Status
-        </Typography>
+      <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
         <MaterialReactTable table={table} />
-      </Paper>
-    </Box>
+      </TableContainer>
   );
 };
 

@@ -1,14 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAxios } from "../contexts/AxiosContext";
-import { useUser } from "./UserContext";
 
 const BooksContext = createContext();
 
-export const BooksProvider = ({ children, role }) => {
+export const BooksProvider = ({ children }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const axios = useAxios();
-  const { setUser } = useUser();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -23,7 +21,7 @@ export const BooksProvider = ({ children, role }) => {
     };
 
     fetchBooks();
-  }, [role]);
+  }, [setBooks]);
 
   const addBook = async (newBook) => {
     try {

@@ -11,32 +11,35 @@ import { AxiosProvider } from "./contexts/AxiosContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { BooksProvider } from "./contexts/BooksContext";
 
 const App = () => {
   return (
     <AxiosProvider>
       <UserProvider>
-        <AbilityProvider>
-          <Router>
-            <ErrorBoundary>
-              <Routes>
-                <Route path="/" element={<CommonPage />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/owner" element={<OwnerPage />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <DashboardPage />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
-            </ErrorBoundary>
-          </Router>
-        </AbilityProvider>
+        <BooksProvider>
+          <AbilityProvider>
+            <Router>
+              <ErrorBoundary>
+                <Routes>
+                  <Route path="/" element={<CommonPage />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/owner" element={<OwnerPage />} />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </ErrorBoundary>
+            </Router>
+          </AbilityProvider>
+        </BooksProvider>
       </UserProvider>
     </AxiosProvider>
   );
