@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import CssBaseline from '@mui/material/CssBaseline';
 import reportWebVitals from './reportWebVitals';
-import theme from './theme';
+import {theme} from './theme';
 import { ThemeProvider } from '@mui/material/styles';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

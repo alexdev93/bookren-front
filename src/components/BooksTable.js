@@ -1,57 +1,178 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useBooks } from "../contexts/BooksContext";
+import { useUser } from "../contexts/UserContext";
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import GetAppIcon from "@mui/icons-material/GetApp";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import DoneIcon from "@mui/icons-material/DoneAllTwoTone";
+import RevertIcon from "@mui/icons-material/NotInterestedOutlined";
 
 const BooksTable = () => {
-  const { books, loading } = useBooks(); // Fetch books data and loading state
+  const { books, setBooks, approveBook, updateBook, loading } = useBooks();
+  const { user } = useUser() || {};
 
-  // Define columns using useMemo
+  const [rowSelection, setRowSelection] = useState({});
+  const [editingRowId, setEditingRowId] = useState(null);
+  const [editedRowData, setEditedRowData] = useState({});
+
   const columns = useMemo(
     () => [
       {
-        accessorKey: "title", // Assuming book has a 'title' field
+        accessorKey: "title",
         header: "Title",
         size: 150,
+        Cell: ({ cell, row }) =>
+          editingRowId === row.original.id ? (
+            <input
+              type="text"
+              value={editedRowData.title || ""}
+              onChange={(e) =>
+                handleEdit(row.original.id, "title", e.target.value)
+              }
+            />
+          ) : (
+            cell.getValue()
+          ),
       },
       {
-        accessorKey: "author", // Assuming book has an 'author' field
+        accessorKey: "author",
         header: "Author",
         size: 150,
+        Cell: ({ cell, row }) =>
+          editingRowId === row.original.id ? (
+            <input
+              type="text"
+              value={editedRowData.author || ""}
+              onChange={(e) =>
+                handleEdit(row.original.id, "author", e.target.value)
+              }
+            />
+          ) : (
+            cell.getValue()
+          ),
       },
       {
-        accessorKey: "categoryId", // Assuming book has a 'categoryId' field
+        accessorKey: "categoryId",
         header: "Category ID",
         size: 150,
+        Cell: ({ cell, row }) =>
+          editingRowId === row.original.id ? (
+            <input
+              type="text"
+              value={editedRowData.categoryId || ""}
+              onChange={(e) =>
+                handleEdit(row.original.id, "categoryId", e.target.value)
+              }
+            />
+          ) : (
+            cell.getValue()
+          ),
       },
       {
-        accessorKey: "isApproved", // Assuming book has an 'isApproved' field
+        accessorKey: "isApproved",
         header: "Approved",
         size: 150,
+        Cell: ({ cell, row }) =>
+          user?.role === "admin" ? (
+            editingRowId === row.original.id ? (
+              <select
+                value={editedRowData.isApproved ? "true" : "false"}
+                onChange={(e) =>
+                  handleEdit(
+                    row.original.id,
+                    "isApproved",
+                    e.target.value === "true"
+                  )
+                }
+              >
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            ) : cell.getValue() ? (
+              "True"
+            ) : (
+              "False"
+            )
+          ) : cell.getValue() ? (
+            "True"
+          ) : (
+            "False"
+          ),
       },
       {
-        accessorKey: "createdAt", // Assuming book has a 'createdAt' field
+        accessorKey: "createdAt",
         header: "Created At",
         size: 150,
       },
       {
-        accessorKey: "updatedAt", // Assuming book has an 'updatedAt' field
+        accessorKey: "updatedAt",
         header: "Updated At",
         size: 150,
       },
+      {
+        accessorKey: "actions",
+        header: "Actions",
+        size: 100,
+        Cell: ({ row }) =>
+          editingRowId === row.original.id ? (
+            <>
+              <DoneIcon
+                onClick={() => saveEdit(row.original.id)}
+                style={{ cursor: "pointer", color: "green" }}
+              />
+              <RevertIcon
+                onClick={() => cancelEdit()}
+                style={{ cursor: "pointer", color: "red" }}
+              />
+            </>
+          ) : (
+            <EditIcon
+              onClick={() => startEdit(row.original.id, row.original)}
+              style={{ cursor: "pointer" }}
+            />
+          ),
+      },
     ],
-    []
+    [user?.role, editingRowId, editedRowData]
   );
 
-  // Setup the table with useMaterialReactTable
+  const handleEdit = (bookId, key, value) => {
+    setEditedRowData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const startEdit = (rowId, rowData) => {
+    setEditingRowId(rowId);
+    setEditedRowData(rowData);
+  };
+
+  const saveEdit = async (rowId) => {
+    await updateBook(rowId, editedRowData);
+    setEditingRowId(null);
+    setEditedRowData({});
+  };
+
+  const cancelEdit = () => {
+    setEditingRowId(null);
+    setEditedRowData({});
+  };
+
   const table = useMaterialReactTable({
     columns,
-    data: books || [], // Use books data from the context, default to empty array if undefined
+    data: books || [],
+    enableColumnOrdering: true,
+    enableRowSelection: true,
+    enablePagination: false,
+    onRowSelectionChange: setRowSelection,
+    state: { rowSelection },
   });
 
-  // Handle loading state
   if (loading) {
     return <div>Loading...</div>;
   }

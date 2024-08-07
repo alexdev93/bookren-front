@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAxios } from "../contexts/AxiosContext";
+import { useUser } from "./UserContext";
 
 const BooksContext = createContext();
 
@@ -7,6 +8,7 @@ export const BooksProvider = ({ children, role }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const axios = useAxios();
+  const { setUser } = useUser();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -45,14 +47,15 @@ export const BooksProvider = ({ children, role }) => {
 
   const approveBook = async (bookId) => {
     try {
-      await axios.put(`/api/books/${bookId}/approve`);
+      const response = await axios.patch(`/books/${bookId}/approve`);
+      console.log(response.data)
       setBooks(
         books.map((book) =>
           book.id === bookId ? { ...book, isApproved: true } : book
         )
       );
     } catch (error) {
-      console.error("Error approving book:", error);
+      console.error("Error approving book:", error.message);
     }
   };
 

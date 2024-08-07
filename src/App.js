@@ -9,7 +9,8 @@ import { UserProvider } from "./contexts/UserContext";
 import { AbilityProvider } from "./contexts/AbilityContext";
 import { AxiosProvider } from "./contexts/AxiosContext";
 import ErrorBoundary from "./components/ErrorBoundary";
-import  Dashboard  from "./pages/Dashboard";
+import DashboardPage from "./pages/DashboardPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -24,7 +25,14 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/owner" element={<OwnerPage />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </ErrorBoundary>
           </Router>
