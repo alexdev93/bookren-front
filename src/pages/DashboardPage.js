@@ -4,6 +4,7 @@ import BookStatus from "../components/BookStatus";
 import BookStatsPieChart from "../components/BookStatsPieChart";
 import EarningSummaryChart from "../components/EarningSummaryChart";
 import Sidebar from "../components/Sidebar";
+import StaticsCard from "../components/StaticsCard";
 
 const DashboardPage = () => {
   return (
@@ -26,6 +27,7 @@ const DashboardPage = () => {
           <Grid container spacing={0.5}>
             <Grid item xs={12} sm={3.2}>
               <Paper sx={{ height: "100%", padding: 1, borderRadius: 1 }}>
+                {/* <StaticsCard /> */}
                 <BookStatsPieChart />
               </Paper>
             </Grid>

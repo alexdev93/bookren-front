@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
 import { useBooks } from "../contexts/BooksContext"; // Adjust the path to your context
+import { Box, Button, Typography } from "@mui/material";
 
-// Updated Chart options
+// Updated Chart options with legend on top
 const baseChartOptions = {
   chart: {
     height: 250,
@@ -85,6 +86,30 @@ const baseChartOptions = {
       formatter: (value) => `$${value}`,
     },
   },
+  legend: {
+    position: "top", // Move the legend to the top
+    horizontalAlign: "right", // Center align the legend
+    offsetX: 0, // Adjust horizontal offset
+    offsetY: 0, // Adjust vertical offset
+    labels: {
+      colors: ["#9e9e9e"], // Color of the legend labels
+      useSeriesColor: true, // Use series colors for legend labels
+    },
+  },
+  title: {
+    text: "Earning Summary",
+    align: "left",
+    margin: 10,
+    offsetX: 0,
+    offsetY: 0,
+    floating: true,
+    style: {
+      fontSize: "14px",
+      fontWeight: "bold",
+      fontFamily: undefined,
+      color: "#263238",
+    },
+  },
 };
 
 export default function EarningSummaryChart() {
@@ -105,6 +130,7 @@ export default function EarningSummaryChart() {
       data: [],
     },
   ]);
+  const [period, setPeriod] = useState("current"); // State to manage chart period
 
   useEffect(() => {
     const allMonths = [
@@ -122,20 +148,17 @@ export default function EarningSummaryChart() {
       "Dec",
     ];
 
-    // Get 6 months from the current year
     const currentYearMonths = allMonths.slice(
       new Date().getMonth(),
       new Date().getMonth() + 6
     );
 
-    // Display last 6 months if on the second page
     const lastSixMonths = allMonths.slice(
       new Date().getMonth() - 5,
       new Date().getMonth() + 1
     );
 
-    // Use currentYearMonths for first page and lastSixMonths for the second page
-    const months = currentYearMonths; // Change this to lastSixMonths if you want the second page
+    const months = period === "current" ? currentYearMonths : lastSixMonths;
 
     const lastSixMonthsEarnings = new Array(12).fill(0);
     const lastYearEarnings = new Array(12).fill(0);
@@ -193,14 +216,16 @@ export default function EarningSummaryChart() {
         ),
       },
     ]);
-  }, [books, primary, secondary, line]);
+  }, [books, primary, secondary, line, period]);
 
   return (
-    <ReactApexChart
-      options={options}
-      series={series}
-      type="area"
-      height={250}
-    />
+    <Box>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="area"
+        height={250}
+      />
+    </Box>
   );
 }
