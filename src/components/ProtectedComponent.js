@@ -1,6 +1,7 @@
 import React from "react";
 import { useAbility } from "../contexts/AbilityContext";
 import { ForbiddenError } from "@casl/ability";
+import AccessDenied from "./AccessDenied";
 
 const ProtectedComponent = ({ children, subject }) => {
   const ability = useAbility();
@@ -9,7 +10,7 @@ const ProtectedComponent = ({ children, subject }) => {
     ForbiddenError.from(ability).throwUnlessCan("view", subject);
     return <>{children}</>;
   } catch (error) {
-    return <div>You do not have permission to view this page</div>;
+    return <AccessDenied />;
   }
 };
 

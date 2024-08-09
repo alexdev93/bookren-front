@@ -24,12 +24,14 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response.data)
     return response;
   },
   (error) => {
       if (error.response.status === 401) {
           console.log("unauthorized");
     }
+    console.log(error.message)
     return Promise.reject(error);
   }
 );

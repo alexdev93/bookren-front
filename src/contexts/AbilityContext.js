@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { Ability } from "@casl/ability";
 import { defineAbilitiesFor } from "../utils/abilities";
 import { useUser } from "./UserContext";
@@ -13,11 +13,15 @@ export const AbilityProvider = ({ children }) => {
     if (user) {
       const newAbility = defineAbilitiesFor(user.role);
       setAbility(newAbility);
+    } else {
+      setAbility(new Ability([]));
     }
-  }, [user]);
+  }, []);
+
+  const value = useMemo(() => ability, [ability]);
 
   return (
-    <AbilityContext.Provider value={ability}>
+    <AbilityContext.Provider value={value}>
       {children}
     </AbilityContext.Provider>
   );

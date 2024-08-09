@@ -4,24 +4,17 @@ import { useUser } from "../contexts/UserContext";
 import { CircularProgress, Box } from "@mui/material";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useUser();
+  const { user, loading } = useUser();
 
-  const isAuthenticated = !!user;
-
-  if (user === null) {
+  if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <CircularProgress />
       </Box>
     );
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return user ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAxios } from "../contexts/AxiosContext";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { useAxios } from "./AxiosContext";
+import { useUser } from "./UserContext";
 
 const BooksContext = createContext();
 
@@ -7,26 +8,32 @@ export const BooksProvider = ({ children }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const axios = useAxios();
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchBooks = async () => {
-      try {
-        const response = await axios.get("/books");
-        setBooks(response.data);
-      } catch (error) {
-        console.error("Error fetching books:", error.message);
-      } finally {
-        setLoading(false);
+      if(user){
+        try {
+          const response = await axios.get("/books");
+          setBooks(response.data);
+        } catch (error) {
+          console.error("Error fetching books:", error.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+      else {
+        console.log("Books not fetched because of user not logged")
       }
     };
 
     fetchBooks();
-  }, [setBooks]);
+  }, [user]);
 
   const addBook = async (newBook) => {
     try {
       const response = await axios.post("/api/books", newBook);
-      setBooks([...books, response.data]);
+      setBooks((prevBooks) => [...prevBooks, response.data]);
     } catch (error) {
       console.error("Error adding book:", error);
     }
@@ -35,8 +42,8 @@ export const BooksProvider = ({ children }) => {
   const editBook = async (updatedBook) => {
     try {
       await axios.put(`/api/books/${updatedBook.id}`, updatedBook);
-      setBooks(
-        books.map((book) => (book.id === updatedBook.id ? updatedBook : book))
+      setBooks((prevBooks) =>
+        prevBooks.map((book) => (book.id === updatedBook.id ? updatedBook : book))
       );
     } catch (error) {
       console.error("Error updating book:", error);
@@ -46,9 +53,8 @@ export const BooksProvider = ({ children }) => {
   const approveBook = async (bookId) => {
     try {
       const response = await axios.patch(`/books/${bookId}/approve`);
-      console.log(response.data)
-      setBooks(
-        books.map((book) =>
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
           book.id === bookId ? { ...book, isApproved: true } : book
         )
       );
@@ -60,16 +66,23 @@ export const BooksProvider = ({ children }) => {
   const deleteBook = async (bookId) => {
     try {
       await axios.delete(`/api/books/${bookId}`);
-      setBooks(books.filter((book) => book.id !== bookId));
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== bookId));
     } catch (error) {
       console.error("Error deleting book:", error);
     }
   };
 
+  const value = useMemo(() => ({
+    books,
+    loading,
+    addBook,
+    editBook,
+    deleteBook,
+    approveBook
+  }), [books, loading]);
+
   return (
-    <BooksContext.Provider
-      value={{ books, loading, addBook, editBook, deleteBook, approveBook }}
-    >
+    <BooksContext.Provider value={value}>
       {children}
     </BooksContext.Provider>
   );

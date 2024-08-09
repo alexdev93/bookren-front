@@ -1,10 +1,11 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useMemo, useContext } from "react";
 import {jwtDecode} from "jwt-decode";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -16,13 +17,14 @@ export const UserProvider = ({ children }) => {
         console.error("Invalid token:", error);
         setUser(null);
       }
-    } else {
-      setUser(null);
     }
-  }, []);
+    setLoading(false); // Set loading to false after processing the token
+  }, [loading]);
+
+  const value = useMemo(() => ({ user, setUser, loading }), [user, loading]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

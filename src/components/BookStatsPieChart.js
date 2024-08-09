@@ -52,6 +52,8 @@ const BookStatsDonutChart = () => {
             ][transformedData.indexOf(item) % 6],
           }))
         );
+
+        console.log(books);
       } catch (error) {
         console.error("Error fetching book statistics:", error);
       }

@@ -1,48 +1,112 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
-  Grid,
-  Paper,
   Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   IconButton,
+  Divider,
   Typography,
   Box,
-  Button,
-} from "@mui/material";
-
+  Toolbar,
+} from '@mui/material';
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
-  Settings as SettingsIcon,
   Info as InfoIcon,
-  ExitToApp as LogoutIcon,
-} from "@mui/icons-material";
+  ContactMail as ContactMailIcon,
+  ChevronLeft as ChevronLeftIcon,
+} from '@mui/icons-material';
 
-const Sidebar = () => {
+const drawerWidth = 240;
+
+const Sidebar = ({children}) => {
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+  };
+
+  const menuItems = [
+    { text: 'Home', icon: <HomeIcon /> },
+    { text: 'About', icon: <InfoIcon /> },
+    { text: 'Contact', icon: <ContactMailIcon /> },
+  ];
+  const otherItems = [
+    { text: 'Home', icon: <HomeIcon /> },
+    { text: 'About', icon: <InfoIcon /> },
+    { text: 'Contact', icon: <ContactMailIcon /> },
+  ];
+
   return (
-    <Paper sx={{ minHeight: "100vh", p: 1, borderRadius: 2, ml: 0 }}>
-      <Grid container spacing={2} direction={"column"}>
-        <Grid item>svsdvs</Grid>
-        <Grid item></Grid>
-        <Grid item>
-          <Box sx={{ padding: 1 }}>
-            <Divider />
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<LogoutIcon />}
-              fullWidth
-            >
-              Logout
-            </Button>
-          </Box>
-        </Grid>
-      </Grid>
-    </Paper>
+    <Box sx={{ display: 'flex'}}>
+      <Box position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,  top: 0, display: "flex"}}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </Box>
+
+      {/* Persistent Drawer */}
+      <Drawer
+        variant="persistent"
+        anchor="left"
+        open={open}
+        sx={{
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            '& .MuiBox-root': {
+              p: 1,
+              mt: 5,
+            },
+          
+          },
+        }}
+        >
+        <Divider />
+        <Box sx={{display: "grid"}}>
+        <List>
+          {menuItems.map((item, index) => (
+            <ListItem button key={index}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {otherItems.map((item, index) => (
+            <ListItem button key={index}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
+        </List>
+        </Box>
+      </Drawer>
+
+      {/* Main Content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          marginLeft: open ? `${drawerWidth}px` : '0px', // Shift content when drawer is open
+          transition: 'margin-left 0.3s ease', // Smooth transition
+        }}
+      >
+        {children}
+      </Box>
+    </Box>
   );
 };
 

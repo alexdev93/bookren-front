@@ -6,6 +6,7 @@ import { loginSchema } from "../utils/validationSchema";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../contexts/UserContext";
 import { useAxios } from "../contexts/AxiosContext";
+import RegisterPageWrapper from "../components/RegisterPageWrapper";
 
 const Login = () => {
   const { setUser } = useUser();
@@ -39,7 +40,7 @@ const Login = () => {
       setUser(decodedToken);
 
       console.log("Logged in and authenticated:", decodedToken);
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.errors.reduce((acc, curr) => {
@@ -58,65 +59,67 @@ const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: 2,
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
+    <RegisterPageWrapper>
       <Box
-        component="form"
-        onSubmit={handleSubmit}
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: 2,
-          width: "100%",
-          maxWidth: 400,
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          backgroundColor: "#f5f5f5",
+          padding: 2,
         }}
       >
-        <TextField
-          label="Username"
-          name="username"
-          variant="outlined"
-          fullWidth
-          value={formData.username}
-          onChange={handleChange}
-          error={!!errors.username}
-          helperText={errors.username}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formData.password}
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ padding: 1.5 }}
-        >
+        <Typography variant="h4" gutterBottom>
           Login
-        </Button>
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: "100%",
+            maxWidth: 400,
+          }}
+        >
+          <TextField
+            label="Username"
+            name="username"
+            variant="outlined"
+            fullWidth
+            value={formData.username}
+            onChange={handleChange}
+            error={!!errors.username}
+            helperText={errors.username}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formData.password}
+            onChange={handleChange}
+            error={!!errors.password}
+            helperText={errors.password}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ padding: 1.5 }}
+          >
+            Login
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </RegisterPageWrapper>
   );
 };
 

@@ -6,6 +6,7 @@ import { registrationSchema } from "../utils/validationSchema";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../contexts/UserContext";
 import { useAxios } from "../contexts/AxiosContext";
+import RegisterPageWrapper from "../components/RegisterPageWrapper";
 
 const Register = () => {
   const { setUser } = useUser;
@@ -59,78 +60,79 @@ const Register = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: 2,
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Register as {formData.role}
-      </Typography>
+    <RegisterPageWrapper>
       <Box
-        component="form"
-        onSubmit={handleSubmit}
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: 2,
-          width: "100%",
-          maxWidth: 400,
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          backgroundColor: "#f5f5f5",
+          padding: 2,
         }}
       >
-        <TextField
-          label="Username"
-          name="username"
-          variant="outlined"
-          fullWidth
-          value={formData.username}
-          onChange={handleChange}
-          error={!!errors.username}
-          helperText={errors.username}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formData.password}
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        <TextField
-          label="Email"
-          name="email"
-          type="email"
-          variant="outlined"
-          fullWidth
-          value={formData.email}
-          onChange={handleChange}
-          error={!!errors.email}
-          helperText={errors.email}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        <TextField
-          label="Location"
-          name="location"
-          variant="outlined"
-          fullWidth
-          value={formData.location}
-          onChange={handleChange}
-          error={!!errors.location}
-          helperText={errors.location}
-          sx={{ backgroundColor: "#fff" }}
-        />
-        {/* <TextField
+        <Typography variant="h4" gutterBottom>
+          Register as {formData.role}
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: "100%",
+            maxWidth: 400,
+          }}
+        >
+          <TextField
+            label="Username"
+            name="username"
+            variant="outlined"
+            fullWidth
+            value={formData.username}
+            onChange={handleChange}
+            error={!!errors.username}
+            helperText={errors.username}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formData.password}
+            onChange={handleChange}
+            error={!!errors.password}
+            helperText={errors.password}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            value={formData.email}
+            onChange={handleChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          <TextField
+            label="Location"
+            name="location"
+            variant="outlined"
+            fullWidth
+            value={formData.location}
+            onChange={handleChange}
+            error={!!errors.location}
+            helperText={errors.location}
+            sx={{ backgroundColor: "#fff" }}
+          />
+          {/* <TextField
           label="Phone Number"
           name="phone"
           variant="outlined"
@@ -141,17 +143,18 @@ const Register = () => {
           helperText={errors.phone}
           sx={{ backgroundColor: "#fff" }}
         /> */}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ padding: 1.5 }}
-        >
-          Register
-        </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ padding: 1.5 }}
+          >
+            Register
+          </Button>
+        </Box>
       </Box>
-    </Box>
+    </RegisterPageWrapper>
   );
 };
 
