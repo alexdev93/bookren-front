@@ -1,14 +1,21 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
+import { useAppContext } from "../AppContext";
 import { CircularProgress, Box } from "@mui/material";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useUser();
+  const { state } = useAppContext();
+  const { user } = state;
 
-  if (loading) {
+  if (!user) {
+    console.log("in ProtectedRoute user is null")
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
         <CircularProgress />
       </Box>
     );

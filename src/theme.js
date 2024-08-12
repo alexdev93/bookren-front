@@ -14,7 +14,7 @@ const createCustomTheme = () => {
             padding: 0;
           }
           body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             line-height: 1.5;
           }
           a {
@@ -92,9 +92,10 @@ const createCustomTheme = () => {
         },
       },
     },
-    typography: {},
+    typography: {
+      fontFamily: "'Roboto', Arial, sans-serif",
+    },
   });
 };
 
 export const theme = createCustomTheme();
-

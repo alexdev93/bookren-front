@@ -1,17 +1,26 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { Navigate, useNavigate } from "react-router-dom";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { z } from "zod";
 import { registrationSchema } from "../utils/validationSchema";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../contexts/UserContext";
 import { useAxios } from "../contexts/AxiosContext";
 import RegisterPageWrapper from "../components/RegisterPageWrapper";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 
 const Register = () => {
   const { setUser } = useUser;
-  const navigate = useNavigate();
   const axios = useAxios();
+  const navigate = useNavigate();
+  const [rememberMe, setRememberMe] = useState();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -41,7 +50,7 @@ const Register = () => {
       const decodedToken = await jwtDecode(token);
       setUser(decodedToken);
       console.log("Registered and authenticated:", decodedToken);
-      navigate("/");
+      Navigate("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors = error.errors.reduce((acc, curr) => {
@@ -72,9 +81,15 @@ const Register = () => {
           padding: 2,
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Register as {formData.role}
-        </Typography>
+        <Box sx={{ width: "100%", ml: 31, display: "grid", gap: 3, mb: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <AutoStoriesIcon sx={{ fontSize: 30, color: "#1565c0" }} />
+            <Typography variant="h5">Book Rent</Typography>
+          </Box>
+          <Typography variant="body" gutterBottom>
+            Sign up as owner
+          </Typography>
+        </Box>
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -122,8 +137,8 @@ const Register = () => {
             sx={{ backgroundColor: "#fff" }}
           />
           <TextField
-            label="Location"
-            name="location"
+            label="Phone Number"
+            name="Phone Number"
             variant="outlined"
             fullWidth
             value={formData.location}
@@ -132,26 +147,33 @@ const Register = () => {
             helperText={errors.location}
             sx={{ backgroundColor: "#fff" }}
           />
-          {/* <TextField
-          label="Phone Number"
-          name="phone"
-          variant="outlined"
-          fullWidth
-          value={formData.phone}
-          onChange={handleChange}
-          error={!!errors.phone}
-          helperText={errors.phone}
-          sx={{ backgroundColor: "#fff" }}
-        /> */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+            }
+            label="I accept the terms and conditions"
+          />
           <Button
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
-            sx={{ padding: 1.5 }}
+            sx={{ padding: 1 }}
           >
             Register
           </Button>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: "center", marginTop: 2 }}
+          >
+            Already have an account?{" "}
+            <a href="/login" style={{ color: "#1565c0" }}>
+              Sign in
+            </a>
+          </Typography>
         </Box>
       </Box>
     </RegisterPageWrapper>

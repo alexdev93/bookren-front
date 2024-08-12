@@ -2,65 +2,49 @@ import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import { Box, Paper, Typography, Stack } from "@mui/material";
-import { useBooks } from "../contexts/BooksContext";
-import { transformData } from "../utils/transformBooksChart";
+import { transformData as transformDataPie } from "../utils/transformBooksChart";
+import { books } from "../books";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
-const BookStatsDonutChart = () => {
-  const { books } = useBooks();
+const BookStatsPieChart = ({ state }) => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [categoryInfo, setCategoryInfo] = useState([]);
 
   useEffect(() => {
-    const fetchData = () => {
-      try {
-        const transformedData = transformData(books);
+    const transformedData = transformDataPie(books);
 
-        setChartData({
-          labels: transformedData.map((item) => item.category),
-          datasets: [
-            {
-              label: "Books by Category",
-              data: transformedData.map((item) => item.count),
-              backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#F7829F",
-                "#F4A261",
-              ],
-              borderColor: "#fff",
-              borderWidth: 1,
-              hoverOffset: 10,
-            },
-          ],
-        });
+    const colors = [
+      "#52c93f",
+      "#ff2727",
+      "#006aff",
+      ""
+    ];
 
-        setCategoryInfo(
-          transformedData.map((item) => ({
-            category: item.category,
-            count: item.count,
-            color: [
-              "#FF6384",
-              "#36A2EB",
-              "#FFCE56",
-              "#4BC0C0",
-              "#F7829F",
-              "#F4A261",
-            ][transformedData.indexOf(item) % 6],
-          }))
-        );
+    setChartData({
+      labels: transformedData.map((item) => item.category),
+      datasets: [
+        {
+          label: "Books by Category",
+          data: transformedData.map((item) => item.count),
+          backgroundColor: colors,
+          borderColor: "#fff",
+          borderWidth: 1,
+          hoverOffset: 10,
+        },
+      ],
+    });
 
-        console.log(books);
-      } catch (error) {
-        console.error("Error fetching book statistics:", error);
-      }
-    };
+    setCategoryInfo(
+      transformedData.map((item, index) => ({
+        category: item.category,
+        count: item.count,
+        color: colors[index % colors.length],
+      }))
+    );
+  }, [state.books]);
 
-    fetchData();
-  }, [books]);
+  if (state.loading) return <div>Loading...</div>;
 
   return (
     <Paper
@@ -80,6 +64,7 @@ const BookStatsDonutChart = () => {
           width: "100%",
           height: "100%",
           maxHeight: "300px",
+          padding: "20px",
         }}
       >
         <Pie
@@ -104,7 +89,7 @@ const BookStatsDonutChart = () => {
                 position: "top",
               },
             },
-            cutout: "50%",
+            cutout: "80%",
             interaction: {
               mode: "nearest",
               intersect: false,
@@ -145,4 +130,4 @@ const BookStatsDonutChart = () => {
   );
 };
 
-export default BookStatsDonutChart;
+export default BookStatsPieChart;

@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, ButtonGroup, Button } from "@mui/material";
 import ReactApexChart from "react-apexcharts";
-import { useBooks } from "../contexts/BooksContext"; // Adjust the path to your context
-import { Box, Button, Typography } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
+import { parseISO } from "date-fns";
 
-// Updated Chart options with legend on top
 const baseChartOptions = {
   chart: {
-    height: 250,
     type: "area",
+    height: "100%",
+    width: "100%",
     toolbar: {
       show: false,
+    },
+    animations: {
+      enabled: true,
     },
   },
   dataLabels: {
@@ -33,7 +36,7 @@ const baseChartOptions = {
     },
   },
   grid: {
-    borderColor: "transparent", // Set grid border color to transparent
+    borderColor: "transparent",
     strokeDashArray: 2,
     padding: {
       top: 0,
@@ -51,12 +54,12 @@ const baseChartOptions = {
       },
     },
     axisBorder: {
-      show: false, // Hide x-axis line
+      show: false,
     },
     axisTicks: {
-      show: false, // Hide x-axis ticks
+      show: false,
     },
-    tickAmount: 5, // Show 6 ticks (one for each month)
+    tickAmount: 5,
   },
   yaxis: {
     labels: {
@@ -66,12 +69,12 @@ const baseChartOptions = {
       },
     },
     axisBorder: {
-      show: false, // Hide y-axis line
+      show: false,
     },
     axisTicks: {
-      show: false, // Hide y-axis ticks
+      show: false,
     },
-    tickAmount: 4, // Manually define the number of ticks on the y-axis
+    tickAmount: 4,
   },
   colors: ["blue", "gray"],
   markers: {
@@ -87,13 +90,13 @@ const baseChartOptions = {
     },
   },
   legend: {
-    position: "top", // Move the legend to the top
-    horizontalAlign: "right", // Center align the legend
-    offsetX: 0, // Adjust horizontal offset
-    offsetY: 0, // Adjust vertical offset
+    position: "top",
+    horizontalAlign: "right",
+    offsetX: 0,
+    offsetY: 0,
     labels: {
-      colors: ["#9e9e9e"], // Color of the legend labels
-      useSeriesColor: true, // Use series colors for legend labels
+      colors: ["#9e9e9e"],
+      useSeriesColor: true,
     },
   },
   title: {
@@ -106,18 +109,18 @@ const baseChartOptions = {
     style: {
       fontSize: "14px",
       fontWeight: "bold",
-      fontFamily: undefined,
       color: "#263238",
     },
   },
 };
 
-export default function EarningSummaryChart() {
+export default function EarningSummaryChart({ state }) {
   const theme = useTheme();
   const { primary, secondary } = theme.palette.text;
   const line = theme.palette.divider;
+  const { transactions } = state;
 
-  const { books } = useBooks(); // Fetch books from context
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [options, setOptions] = useState(baseChartOptions);
   const [series, setSeries] = useState([
@@ -130,7 +133,9 @@ export default function EarningSummaryChart() {
       data: [],
     },
   ]);
-  const [period, setPeriod] = useState("current"); // State to manage chart period
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const allMonths = [
@@ -148,29 +153,27 @@ export default function EarningSummaryChart() {
       "Dec",
     ];
 
-    const currentYearMonths = allMonths.slice(
-      new Date().getMonth(),
-      new Date().getMonth() + 6
-    );
-
-    const lastSixMonths = allMonths.slice(
-      new Date().getMonth() - 5,
-      new Date().getMonth() + 1
-    );
-
-    const months = period === "current" ? currentYearMonths : lastSixMonths;
+    const startMonth = new Date().getMonth() - currentPage * itemsPerPage;
+    const months =
+      startMonth < 0
+        ? [
+            ...allMonths.slice(12 + startMonth),
+            ...allMonths.slice(0, startMonth + itemsPerPage),
+          ]
+        : allMonths.slice(startMonth, startMonth + itemsPerPage);
 
     const lastSixMonthsEarnings = new Array(12).fill(0);
     const lastYearEarnings = new Array(12).fill(0);
 
-    books.forEach((book) => {
-      const month = new Date(book.createdAt).getMonth();
-      lastSixMonthsEarnings[month] += parseFloat(book.price);
-      if (
-        new Date(book.createdAt).getFullYear() ===
-        new Date().getFullYear() - 1
-      ) {
-        lastYearEarnings[month] += parseFloat(book.price);
+    transactions.forEach((transaction) => {
+      if (!transaction.createdAt) return;
+      const date = parseISO(transaction.createdAt);
+      const month = date.getMonth();
+      const year = date.getFullYear();
+
+      lastSixMonthsEarnings[month] += parseFloat(transaction.amount);
+      if (year === new Date().getFullYear() - 1) {
+        lastYearEarnings[month] += parseFloat(transaction.amount);
       }
     });
 
@@ -181,22 +184,35 @@ export default function EarningSummaryChart() {
         labels: {
           style: {
             colors: new Array(months.length).fill(secondary),
+            fontSize: isMobile ? "0.4rem" : "0.6rem",
           },
         },
-        tickAmount: 5, // Adjust tick amount to match number of months
+        tickAmount: 5,
       },
       yaxis: {
         labels: {
           style: {
             colors: [secondary],
+            fontSize: isMobile ? "0.4rem" : "0.6rem",
           },
         },
         min: 0,
-        max: 1000,
-        tickAmount: 4, // Keep manual tick count
+        max: Math.max(...lastSixMonthsEarnings, ...lastYearEarnings),
+        tickAmount: 4,
       },
       grid: {
         borderColor: line,
+      },
+      legend: {
+        labels: {
+          colors: [secondary],
+          fontSize: isMobile ? "0.5rem" : "0.6rem",
+        },
+      },
+      title: {
+        style: {
+          fontSize: isMobile ? "12px" : "14px",
+        },
       },
     });
 
@@ -204,27 +220,58 @@ export default function EarningSummaryChart() {
       {
         name: "Last Six Months",
         data: lastSixMonthsEarnings.slice(
-          allMonths.indexOf(months[0]),
-          allMonths.indexOf(months[0]) + months.length
+          startMonth < 0 ? 12 + startMonth : startMonth,
+          startMonth < 0
+            ? 12 + startMonth + months.length
+            : startMonth + months.length
         ),
       },
       {
         name: "Same Period Last Year",
         data: lastYearEarnings.slice(
-          allMonths.indexOf(months[0]),
-          allMonths.indexOf(months[0]) + months.length
+          startMonth < 0 ? 12 + startMonth : startMonth,
+          startMonth < 0
+            ? 12 + startMonth + months.length
+            : startMonth + months.length
         ),
       },
     ]);
-  }, [books, primary, secondary, line, period]);
+  }, [transactions, secondary, line, isMobile, currentPage]);
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    const maxPages = Math.ceil(12 / itemsPerPage) - 1;
+    if (currentPage < maxPages) setCurrentPage(currentPage + 1);
+  };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        width: "100%",
+        padding: isMobile ? "10px" : "20px",
+        boxSizing: "border-box",
+        maxWidth: "100%",
+        overflowX: "auto",
+      }}
+    >
+      <ButtonGroup
+        sx={{ mb: 2, justifyContent: "center", width: "100%" }}
+        variant="outlined"
+        size="small"
+      >
+        <Button onClick={handlePrevPage} disabled={currentPage === 0}>
+          Previous
+        </Button>
+        <Button onClick={handleNextPage}>Next</Button>
+      </ButtonGroup>
       <ReactApexChart
         options={options}
         series={series}
         type="area"
-        height={250}
+        height={isMobile ? "200px" : "200px"}
       />
     </Box>
   );

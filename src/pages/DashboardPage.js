@@ -1,56 +1,94 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import BookStatus from "../components/BookStatus";
-import BookStatsPieChart from "../components/BookStatsPieChart";
+
 import EarningSummaryChart from "../components/EarningSummaryChart";
+
 import Sidebar from "../components/Sidebar";
-import { useUser } from "../contexts/UserContext";
+import { useAppContext } from "../AppContext";
+import StaticsComponent from "../components/StaticsComponent";
+
+const drawerWidth = 240;
 
 const DashboardPage = () => {
-  const {user} = useUser();
+  const { state, fetchBooks, getTransactions } = useAppContext();
+  const { user } = state;
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    fetchBooks();
+    getTransactions();
+  }, [user]);
+
   return (
     <Sidebar>
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", padding: 1, }}>
-        <Grid container spacing={1} sx={{ flexGrow: 1 }}>
-          <Grid item xs={12}>
-            <Paper
+      {({ isDrawerOpen }) => (
+        <Box
+          sx={{
+            maxWidth: "100%",
+            width: "100%",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            padding: 1,
+          }}
+        >
+          <Grid container spacing={1} sx={{ flexGrow: 1 }}>
+            <Grid item xs={12}>
+
+              <Paper
+                sx={{
+                  height: 50,
+                  boxShadow: "0 3px 10px rgba(0, 0, 0, .2)",
+                  borderRadius: 1,
+                  p: 0.5,
+                }}
+              >
+                <Typography ml={5}>{user.role}/Dashboard</Typography>
+              </Paper>
+
+            </Grid>
+
+            <Grid item xs={12} md={isDrawerOpen ? 2.8 : 3}>
+              <StaticsComponent />
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              md={isDrawerOpen ? 4 : 9}
               sx={{
-                height: 50,
-                boxShadow: "0 3px 10px rgba(0, 0, 0, .2)",
-                borderRadius: 1,
-                p: 0.5,
+                // marginLeft: isDrawerOpen ? `${drawerWidth}px` : "0px",
+                transition: "margin-left 0.3s ease",
               }}
             >
-              <Typography ml={5}>{user.role}/Dashboard</Typography>
-            </Paper>
-          </Grid>
+              <Grid
+                container
+                spacing={1}
+                direction="column"
+                sx={{ height: "100%" }}
+              >
 
-          <Grid item xs={12} sm={3}>
-            <Paper sx={{ height: "100%", padding: 1, borderRadius: 1 }}>
-              <BookStatsPieChart />
-            </Paper>
-          </Grid>
+                <Grid item>
+                  <Paper sx={{ padding: 1, borderRadius: 1 }}>
+                    <BookStatus state={state} />
+                  </Paper>
+                </Grid>
 
-
-          <Grid item xs={12} sm={9}>
-            <Grid container spacing={1} direction="column" sx={{ height: "100%" }}>
-
-              <Grid item>
-                <Paper sx={{ padding: 1, borderRadius: 1 }}>
-                  <BookStatus />
-                </Paper>
+                <Grid item xs>
+                  <Paper sx={{ padding: 1, borderRadius: 1 }}>
+                    <EarningSummaryChart state={state} />
+                  </Paper>
+                </Grid>
+                
               </Grid>
-
-              <Grid item xs>
-                <Paper sx={{ padding: 1, borderRadius: 1, height: "100%" }}>
-                  <EarningSummaryChart />
-                </Paper>
-              </Grid>
-              
             </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      )}
     </Sidebar>
   );
 };

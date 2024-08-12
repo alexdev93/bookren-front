@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { z } from "zod";
 import { loginSchema } from "../utils/validationSchema";
 import { jwtDecode } from "jwt-decode";
-import { useUser } from "../contexts/UserContext";
 import { useAxios } from "../contexts/AxiosContext";
 import RegisterPageWrapper from "../components/RegisterPageWrapper";
+import { useAppContext } from "../AppContext";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 
 const Login = () => {
-  const { setUser } = useUser();
+  const { setUserState } = useAppContext();
   const navigate = useNavigate();
   const axios = useAxios();
 
@@ -19,6 +27,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -35,10 +44,11 @@ const Login = () => {
       const response = await axios.post("/users/login", formData);
 
       const token = response.data.token;
-      localStorage.setItem("token", token);
+      if (rememberMe) {
+        localStorage.setItem("token", token);
+      }
       const decodedToken = jwtDecode(token);
-      setUser(decodedToken);
-
+      setUserState(decodedToken);
       console.log("Logged in and authenticated:", decodedToken);
       navigate("/");
     } catch (error) {
@@ -71,9 +81,15 @@ const Login = () => {
           padding: 2,
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Login
-        </Typography>
+        <Box sx={{ width: "100%", ml: 31, display: "grid", gap: 3, mb: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <AutoStoriesIcon sx={{ fontSize: 30, color: "#1565c0" }} />
+            <Typography variant="h5">Book Rent</Typography>
+          </Box>
+          <Typography variant="h8" gutterBottom>
+            Login
+          </Typography>
+        </Box>
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -108,15 +124,33 @@ const Login = () => {
             helperText={errors.password}
             sx={{ backgroundColor: "#fff" }}
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+            }
+            label="Remember me"
+          />
           <Button
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
-            sx={{ padding: 1.5 }}
+            sx={{ padding: 1 }}
           >
             Login
           </Button>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: "center", marginTop: 2 }}
+          >65
+            Haven't got an account?{" "}
+            <a href="/register" style={{ color: "#1565c0" }}>
+              Sign up
+            </a>
+          </Typography>
         </Box>
       </Box>
     </RegisterPageWrapper>

@@ -18,7 +18,7 @@ export const UserProvider = ({ children }) => {
         setUser(null);
       }
     }
-    setLoading(false); // Set loading to false after processing the token
+    setLoading(false); 
   }, [loading]);
 
   const value = useMemo(() => ({ user, setUser, loading }), [user, loading]);

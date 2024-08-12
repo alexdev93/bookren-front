@@ -1,10 +1,11 @@
-import React from "react";
-import { useAbility } from "../contexts/AbilityContext";
+import React, {useEffect} from "react";
 import { ForbiddenError } from "@casl/ability";
 import AccessDenied from "./AccessDenied";
+import { useAppContext } from "../AppContext";
 
 const ProtectedComponent = ({ children, subject }) => {
-  const ability = useAbility();
+   const { state, setUserAbilities } = useAppContext();
+   const { ability } = state;
 
   try {
     ForbiddenError.from(ability).throwUnlessCan("view", subject);

@@ -1,23 +1,20 @@
 import React, { useMemo, useState } from "react";
-import { useBooks } from "../contexts/BooksContext";
-import { useUser } from "../contexts/UserContext";
 import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
-import GetAppIcon from "@mui/icons-material/GetApp";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/EditOutlined";
 import DoneIcon from "@mui/icons-material/DoneAllTwoTone";
 import RevertIcon from "@mui/icons-material/NotInterestedOutlined";
+import { useAppContext } from "../AppContext";
 
-const BooksTable = () => {
-  const { books, setBooks, approveBook, updateBook, loading } = useBooks();
-  const { user } = useUser() || {};
-
+const Books = () => {
+  const { state } = useAppContext();
+  const { user, books, loading } = state;
   const [rowSelection, setRowSelection] = useState({});
   const [editingRowId, setEditingRowId] = useState(null);
   const [editedRowData, setEditedRowData] = useState({});
+
 
   const columns = useMemo(
     () => [
@@ -153,7 +150,7 @@ const BooksTable = () => {
   };
 
   const saveEdit = async (rowId) => {
-    await updateBook(rowId, editedRowData);
+    // await updateBook(rowId, editedRowData);
     setEditingRowId(null);
     setEditedRowData({});
   };
@@ -180,4 +177,4 @@ const BooksTable = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default BooksTable;
+export default Books;

@@ -16,7 +16,7 @@ export const AbilityProvider = ({ children }) => {
     } else {
       setAbility(new Ability([]));
     }
-  }, []);
+  }, [user]);
 
   const value = useMemo(() => ability, [ability]);
 

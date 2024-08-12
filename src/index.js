@@ -1,17 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import CssBaseline from '@mui/material/CssBaseline';
-import reportWebVitals from './reportWebVitals';
-import {theme} from './theme';
-import { ThemeProvider } from '@mui/material/styles';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import CssBaseline from "@mui/material/CssBaseline";
+import reportWebVitals from "./reportWebVitals";
+import { theme } from "./theme";
+import { ThemeProvider } from "@mui/material/styles";
+import { AppProvider } from "./AppContext";
+import { AxiosProvider } from "./contexts/AxiosContext";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        <App />
+      <AxiosProvider>
+        <AppProvider>
+          <App />
+        </AppProvider>
+      </AxiosProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

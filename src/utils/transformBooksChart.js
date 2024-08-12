@@ -1,12 +1,18 @@
+// utils/transformBooksChart.js
 export const transformData = (books) => {
-  const categoryCount = books.reduce((acc, book) => {
-    const categoryName = book?.category?.name || 'Unknown';
-    acc[categoryName] = (acc[categoryName] || 0) + 1;
-    return acc;
-  }, {});
+  const categoryCount = {};
 
-  return Object.entries(categoryCount).map(([category, count]) => ({
+  books.forEach((book) => {
+    const category = book.Category.name;
+    if (categoryCount[category]) {
+      categoryCount[category]++;
+    } else {
+      categoryCount[category] = 1;
+    }
+  });
+
+  return Object.keys(categoryCount).map((category) => ({
     category,
-    count,
+    count: categoryCount[category],
   }));
 };
