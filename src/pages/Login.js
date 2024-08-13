@@ -44,7 +44,7 @@ const Login = () => {
       const response = await axios.post("/users/login", formData);
 
       const token = response.data.token;
-      if (rememberMe) {
+      if (token) {
         localStorage.setItem("token", token);
       }
       const decodedToken = jwtDecode(token);
