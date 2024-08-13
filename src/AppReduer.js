@@ -1,11 +1,11 @@
 export const initialState = {
-  user: {},
+  user: JSON.parse(localStorage.getItem("user")) || {},
   abilities: {},
   books: [],
   transactions: [],
   owners: [],
-  loading: true,
-  error: ""
+  loading: false,
+  error: "",
 };
 
 export const appReducer = (state, action) => {

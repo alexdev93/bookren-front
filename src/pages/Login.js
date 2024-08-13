@@ -146,7 +146,7 @@ const Login = () => {
             variant="body2"
             sx={{ textAlign: "center", marginTop: 2 }}
           >
-            65 Haven't got an account?{" "}
+            Haven't got an account?{" "}
             <a href="/register" style={{ color: "#1565c0" }}>
               Sign up
             </a>

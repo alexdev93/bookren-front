@@ -22,11 +22,12 @@ export const AppProvider = ({ children }) => {
   };
 
 
-  const setUserState = async (userInfo) => {
+  const setUserState = (userInfo) => {
     try {
+      localStorage.setItem("user", JSON.stringify(userInfo));
       dispatch({ type: "FETCH_USER_INFO_SUCCESS", payload: userInfo });
     } catch (error) {
-      console.error("Failed to fetch user info:", error);
+      console.error("Failed to set user info:", error);
       dispatch({ type: "FETCH_USER_INFO_FAILURE" });
     }
   };
