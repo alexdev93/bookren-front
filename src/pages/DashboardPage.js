@@ -35,7 +35,7 @@ const DashboardPage = () => {
             display: "flex",
             flexDirection: "column",
             padding: 1,
-            mr: 3
+            mr: 3,
           }}
         >
           <Grid container spacing={1} sx={{ flexGrow: 1 }}>
@@ -48,7 +48,12 @@ const DashboardPage = () => {
                   p: 0.5,
                 }}
               >
-                <Typography ml={5}><span style={{ fontSize: 30, fontWeight: 700}}>{user.role}</span>/Dashboard</Typography>
+                <Typography ml={5}>
+                  <span style={{ fontSize: 30, fontWeight: 700 }}>
+                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                  </span>
+                  /Dashboard
+                </Typography>
               </Paper>
             </Grid>
 

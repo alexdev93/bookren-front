@@ -7,7 +7,6 @@ import {
   Typography,
   Paper,
   Box,
-  CircularProgress,
   TableContainer,
   IconButton,
 } from "@mui/material";
