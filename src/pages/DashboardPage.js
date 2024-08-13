@@ -59,7 +59,7 @@ const DashboardPage = () => {
             <Grid
               item
               xs={12}
-              md={isDrawerOpen ? 4 : 9}
+              md={isDrawerOpen ? 8.5 : 9}
               sx={{
                 // marginLeft: isDrawerOpen ? `${drawerWidth}px` : "0px",
                 transition: "margin-left 0.3s ease",
