@@ -3,7 +3,9 @@ export const initialState = {
   abilities: {},
   books: [],
   transactions: [],
+  owners: [],
   loading: true,
+  error: ""
 };
 
 export const appReducer = (state, action) => {
@@ -18,7 +20,7 @@ export const appReducer = (state, action) => {
     case "FETCH_BOOKS_FAILURE":
       return { ...state, error: "Failed to fetch books", loading: false };
     case "FETCH_USER_INFO_SUCCESS":
-      return { ...state, userInfo: action.payload, loading: false };
+      return { ...state, user: action.payload, loading: false };
     case "FETCH_USER_INFO_FAILURE":
       return { ...state, error: "Failed to fetch user info", loading: false };
     case "FETCH_TRANSACTIONS_SUCCESS":

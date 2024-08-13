@@ -3,6 +3,7 @@ import { useTheme, ButtonGroup, Button } from "@mui/material";
 import ReactApexChart from "react-apexcharts";
 import { Box, useMediaQuery } from "@mui/material";
 import { parseISO } from "date-fns";
+import { transactions } from "../transaction"
 
 const baseChartOptions = {
   chart: {
@@ -76,7 +77,7 @@ const baseChartOptions = {
     },
     tickAmount: 4,
   },
-  colors: ["blue", "gray"],
+  colors: ["#00abff", "gray"],
   markers: {
     size: 0,
   },
@@ -118,7 +119,7 @@ export default function EarningSummaryChart({ state }) {
   const theme = useTheme();
   const { primary, secondary } = theme.palette.text;
   const line = theme.palette.divider;
-  const { transactions } = state;
+  // const { transactions } = state;
 
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 

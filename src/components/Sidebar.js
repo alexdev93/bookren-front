@@ -36,48 +36,58 @@ const Sidebar = ({ children }) => {
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   const menuItems = [
     {
       text: "Dashboard",
-      icon: <HomeIcon sx={{ color: "#fff" }} />,
+      icon: <HomeIcon sx={{ color: "#45495e" }} />,
       roles: ["admin", "owner"],
       route: "/",
     },
     {
       text: "Book Upload",
-      icon: <InfoIcon sx={{ color: "#fff" }} />,
+      icon: <InfoIcon sx={{ color: "#45495e" }} />,
       roles: ["owner"],
       route: "/bookupload",
     },
     {
       text: "Books",
-      icon: <InfoIcon sx={{ color: "#fff" }} />,
+      icon: <InfoIcon sx={{ color: "#45495e" }} />,
       roles: ["admin"],
       route: "/books",
     },
     {
       text: "Owners",
-      icon: <InfoIcon sx={{ color: "#fff" }} />,
+      icon: <InfoIcon sx={{ color: "#45495e" }} />,
       roles: ["admin"],
       route: "/owners",
     },
     {
       text: "Other",
-      icon: <ContactMailIcon sx={{ color: "#fff" }} />,
+      icon: <ContactMailIcon sx={{ color: "#45495e" }} />,
       roles: ["admin", "owner"],
       route: "/",
     },
   ];
 
   const otherItems = [
-    { text: "Notification", icon: <HomeIcon sx={{ color: "#fff" }} /> },
-    { text: "Settings", icon: <InfoIcon sx={{ color: "#fff" }} /> },
+    { text: "Notification", icon: <HomeIcon sx={{ color: "#45495e" }} /> },
+    { text: "Settings", icon: <InfoIcon sx={{ color: "#45495e" }} /> },
     {
       text: "Login as owner",
-      icon: <ContactMailIcon sx={{ color: "#fff" }} />,
+      icon: <ContactMailIcon sx={{ color: "#45495e" }} />,
     },
   ];
+
+  const filteredItems = menuItems.filter((item) =>
+    item.roles.includes(user.role)
+  );
+
+  console.log(filteredItems);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -134,10 +144,10 @@ const Sidebar = ({ children }) => {
           }}
         >
           <List>
-            {menuItems.map((item, index) => (
+            {filteredItems.map((item, index) => (
               <ListItem button key={index} onClick={() => navigate(item.route)}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.text} sx={{ color: "#fff" }} />
               </ListItem>
             ))}
           </List>
@@ -146,7 +156,7 @@ const Sidebar = ({ children }) => {
             {otherItems.map((item, index) => (
               <ListItem button key={index}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                <ListItemText primary={item.text} sx={{ color: "#45495e" }} />
               </ListItem>
             ))}
           </List>
@@ -158,7 +168,9 @@ const Sidebar = ({ children }) => {
               fontWeight: 600,
               width: "80%",
               mb: 3,
+              backgroundColor: "#45495e",
             }}
+            onClick={handleLogout}
           >
             Logout
           </Button>
@@ -171,14 +183,16 @@ const Sidebar = ({ children }) => {
         sx={{
           flexGrow: 1,
           marginLeft: open ? `${drawerWidth}px` : 0,
+          width: "100%",
+          width: open ? `calc(100% - ${drawerWidth}px)` : "100%",
           transition: "margin-left 0.3s ease",
           overflowX: "hidden",
+          p: 2,
         }}
       >
         {typeof children === "function"
           ? children({ isDrawerOpen: open })
-          : children}{console.log(open)}
-          
+          : children}
       </Box>
     </Box>
   );

@@ -14,14 +14,15 @@ const DashboardPage = () => {
   const { state, fetchBooks, getTransactions } = useAppContext();
   const { user } = state;
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!user) {
+  //     return;
+  //   }
 
-    fetchBooks();
-    getTransactions();
-  }, [user]);
+  //   console.log(user, "this isidn")
+  //   fetchBooks();
+  //   getTransactions();
+  // }, [user]);
 
   return (
     <Sidebar>
@@ -34,11 +35,11 @@ const DashboardPage = () => {
             display: "flex",
             flexDirection: "column",
             padding: 1,
+            mr: 3
           }}
         >
           <Grid container spacing={1} sx={{ flexGrow: 1 }}>
             <Grid item xs={12}>
-
               <Paper
                 sx={{
                   height: 50,
@@ -47,9 +48,8 @@ const DashboardPage = () => {
                   p: 0.5,
                 }}
               >
-                <Typography ml={5}>{user.role}/Dashboard</Typography>
+                <Typography ml={5}><span style={{ fontSize: 30, fontWeight: 700}}>{user.role}</span>/Dashboard</Typography>
               </Paper>
-
             </Grid>
 
             <Grid item xs={12} md={isDrawerOpen ? 2.8 : 3}>
@@ -69,12 +69,13 @@ const DashboardPage = () => {
                 container
                 spacing={1}
                 direction="column"
-                sx={{ height: "100%" }}
+                sx={{ height: "100%", mr: 5 }}
               >
-
                 <Grid item>
                   <Paper sx={{ padding: 1, borderRadius: 1 }}>
-                    <BookStatus state={state} />
+                    <Box sx={{ m: 2 }}>
+                      <BookStatus state={state} />
+                    </Box>
                   </Paper>
                 </Grid>
 
@@ -83,7 +84,6 @@ const DashboardPage = () => {
                     <EarningSummaryChart state={state} />
                   </Paper>
                 </Grid>
-                
               </Grid>
             </Grid>
           </Grid>

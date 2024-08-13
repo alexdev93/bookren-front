@@ -107,7 +107,7 @@ export const transactions = [
   {
     id: 12,
     walletId: 2,
-    amount: 870, // January (last year)
+    amount: 400, // January (last year)
     createdAt: "2023-01-29T10:39:25.076Z",
     updatedAt: "2024-08-09T19:28:26.154Z",
   },
@@ -121,7 +121,7 @@ export const transactions = [
   {
     id: 24,
     walletId: 2,
-    amount: 1050, // December (last year)
+    amount: 500, // December (last year)
     createdAt: "2023-12-21T07:39:04.367Z",
     updatedAt: "2024-08-09T19:30:51.259Z",
   },
@@ -135,7 +135,7 @@ export const transactions = [
   {
     id: 25,
     walletId: 2,
-    amount: 900, // November (last year)
+    amount: 4000, // November (last year)
     createdAt: "2023-11-20T11:14:31.863Z",
     updatedAt: "2024-08-09T19:29:14.897Z",
   },
@@ -149,14 +149,14 @@ export const transactions = [
   {
     id: 27,
     walletId: 2,
-    amount: 920, // September (last year)
+    amount: 3000, // September (last year)
     createdAt: "2023-09-10T11:14:31.863Z",
     updatedAt: "2024-08-09T19:29:14.897Z",
   },
   {
     id: 28,
     walletId: 2,
-    amount: 780, // August (current year)
+    amount: 100, // August (current year)
     createdAt: "2024-08-02T14:11:10.101Z",
     updatedAt: "2024-08-09T19:30:51.259Z",
   },
@@ -170,7 +170,7 @@ export const transactions = [
   {
     id: 30,
     walletId: 2,
-    amount: 760, // September (current year)
+    amount: 3000, // September (current year)
     createdAt: "2024-09-12T08:35:32.446Z",
     updatedAt: "2024-09-12T19:31:00.259Z",
   },
@@ -198,7 +198,7 @@ export const transactions = [
   {
     id: 34,
     walletId: 2,
-    amount: 650, // November (current year)
+    amount: 3000, // November (current year)
     createdAt: "2024-11-05T10:11:13.678Z",
     updatedAt: "2024-11-05T22:31:00.259Z",
   },

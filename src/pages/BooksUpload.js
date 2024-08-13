@@ -8,6 +8,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Paper
 } from "@mui/material";
 import { useAxios } from "../contexts/AxiosContext"; // Import your custom hook
 
@@ -51,6 +52,18 @@ const BookUpload = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      <Paper
+        sx={{
+          height: 50,
+          boxShadow: "0 3px 10px rgba(0, 0, 0, .2)",
+          borderRadius: 1,
+          p: 0.5,
+        }}
+      >
+        <Typography ml={5}>
+          <span style={{ fontSize: 30, fontWeight: 700 }}>Owner</span>/upload books
+        </Typography>
+      </Paper>
       <Typography variant="h4" gutterBottom>
         Upload a Book
       </Typography>

@@ -2,13 +2,18 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAppContext } from "../AppContext";
 import { CircularProgress, Box } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 
 const ProtectedRoute = ({ children }) => {
   const { state } = useAppContext();
-  const { user } = state;
+  const { user, setUserState } = state;
 
   if (!user) {
-    console.log("in ProtectedRoute user is null")
+    const token = localStorage.getItem("token") || "";
+    const decodedToken = jwtDecode(token);
+    decodedToken
+      ? setUserState(decodedToken)
+      : console.log("there is not token");
     return (
       <Box
         display="flex"

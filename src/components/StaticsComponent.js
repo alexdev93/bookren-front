@@ -9,11 +9,11 @@ const StaticsComponent = () => {
     <Paper
       sx={{
         width: "100%",
-        height: "100vh",
+        height: "90vh",
         borderRadius: 1,
         display: "flex",
         flexDirection: "column",
-        gap: 2,
+        gap: 1,
         overflow: "hidden",
       }}
     >
