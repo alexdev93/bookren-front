@@ -1,32 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useAppContext } from "../AppContext";
 import { CircularProgress, Box } from "@mui/material";
-import { jwtDecode } from "jwt-decode";
+import { useAxios } from "../contexts/AxiosContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { state } = useAppContext();
-  const { user, setUserState } = state;
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const axios = useAxios()
 
-  if (!user) {
-    const token = localStorage.getItem("token") || "";
-    const decodedToken = jwtDecode(token);
-    decodedToken
-      ? setUserState(decodedToken)
-      : console.log("there is not token");
+  const checkAuth = async () => {
+    const token = localStorage.getItem("token");
+    console.log(token)
+
+    if (!token) {
+      console.log("No token found in sessionStorage");
+      return false;
+    }
+
+    try {
+      const response = await axios.post(`/auths/verify`);
+
+      // Axios does not have response.ok like fetch; check for status instead
+      if (response.status !== 200) {
+        console.log("Response sttatus - ", response.status);
+      }
+
+      const data = response.data;
+      if (data) {
+        return true;
+      } else {
+        console.log("Token verification response invalid");
+      }
+    } catch (err) {
+      console.error("Token verification error:", err);
+      localStorage.removeItem("token");
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const result = await checkAuth();
+        setIsAuthenticated(result);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyAuth();
+  }, []);
+
+  if (isAuthenticated === null) {
+    // Show the loading spinner while checking authentication
     return (
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh"
+        height="100vh"
       >
         <CircularProgress />
       </Box>
     );
   }
 
-  return user ? children : <Navigate to="/login" />;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;
