@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -7,65 +6,26 @@ import {
   Typography,
   Checkbox,
   FormControlLabel,
+  CircularProgress,
 } from "@mui/material";
-import { z } from "zod";
-import { loginSchema } from "../utils/validationSchema";
-import { jwtDecode } from "jwt-decode";
-import { useAxios } from "../contexts/AxiosContext";
-import RegisterPageWrapper from "../components/RegisterPageWrapper";
-import { useAppContext } from "../AppContext";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import RegisterPageWrapper from "../components/RegisterPageWrapper";
+import { useLogin } from "./useLogin";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { setUserState } = useAppContext();
+  const { login, rememberMe, setRememberMe, loading, error } = useLogin();
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const navigate = useNavigate();
-  const axios = useAxios();
-
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [rememberMe, setRememberMe] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      loginSchema.parse(formData);
-
-      const response = await axios.post("/users/login", formData);
-
-      const token = response.data.token;
-      if (token) {
-        localStorage.setItem("token", token);
-      }
-      const decodedToken = jwtDecode(token);
-      setUserState(decodedToken);
-      console.log("Logged in and authenticated:", decodedToken);
-      navigate("/");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.errors.reduce((acc, curr) => {
-          acc[curr.path[0]] = curr.message;
-          return acc;
-        }, {});
-        setErrors(fieldErrors);
-      } else if (error.response) {
-        console.error("Login error:", error.response.data);
-      } else if (error.request) {
-        console.error("Network error:", error.message);
-      } else {
-        console.error("Error:", error.message);
-      }
-    }
+    await login(formData).then(() => navigate("/"));
   };
 
   return (
@@ -86,7 +46,7 @@ const Login = () => {
             <AutoStoriesIcon sx={{ fontSize: 30, color: "#1565c0" }} />
             <Typography variant="h5">Book Rent</Typography>
           </Box>
-          <Typography variant="h8" gutterBottom>
+          <Typography variant="h6" gutterBottom>
             Login
           </Typography>
         </Box>
@@ -108,8 +68,8 @@ const Login = () => {
             fullWidth
             value={formData.username}
             onChange={handleChange}
-            error={!!errors.username}
-            helperText={errors.username}
+            error={!!error.username}
+            helperText={error.username}
             sx={{ backgroundColor: "#fff" }}
           />
           <TextField
@@ -120,8 +80,8 @@ const Login = () => {
             fullWidth
             value={formData.password}
             onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
+            error={!!error.password}
+            helperText={error.password}
             sx={{ backgroundColor: "#fff" }}
           />
           <FormControlLabel
@@ -139,8 +99,9 @@ const Login = () => {
             color="primary"
             fullWidth
             sx={{ padding: 1 }}
+            disabled={loading}
           >
-            Login
+            {loading ? <CircularProgress size={20} /> : "Sign In"}
           </Button>
           <Typography
             variant="body2"

@@ -2,8 +2,6 @@ import StaticsCard from "../components/StaticsCard";
 import BookStatsPieChart from "../components/BookStatsPieChart";
 import { Box, Paper, Typography } from "@mui/material";
 
-const drawerWidth = 240;
-
 const StaticsComponent = () => {
   return (
     <Paper

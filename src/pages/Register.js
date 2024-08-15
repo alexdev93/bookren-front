@@ -11,15 +11,11 @@ import {
 import { z } from "zod";
 import { registrationSchema } from "../utils/validationSchema";
 import { jwtDecode } from "jwt-decode";
-import { useUser } from "../contexts/UserContext";
-import { useAxios } from "../contexts/AxiosContext";
 import RegisterPageWrapper from "../components/RegisterPageWrapper";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import { registerApi } from "../api";
 
 const Register = () => {
-  const { setUser } = useUser;
-  const axios = useAxios();
-  const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState();
 
   const [formData, setFormData] = useState({
@@ -44,11 +40,9 @@ const Register = () => {
     try {
       registrationSchema.parse(formData);
 
-      const response = await axios.post("/users/register", formData);
-      const token = response.data.token;
+      const { token } = await registerApi(formData);
       localStorage.setItem("token", token);
       const decodedToken = await jwtDecode(token);
-      setUser(decodedToken);
       console.log("Registered and authenticated:", decodedToken);
       Navigate("/");
     } catch (error) {

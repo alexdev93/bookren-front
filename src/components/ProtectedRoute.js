@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { CircularProgress, Box } from "@mui/material";
-import { useAxios } from "../contexts/AxiosContext";
+import { useAppContext } from "../AppContext";
+import { verifyToken } from "../api";
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const axios = useAxios()
+  const { getUserInfo } = useAppContext();
 
   const checkAuth = async () => {
-    const token = localStorage.getItem("token");
-    console.log(token)
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
 
     if (!token) {
       console.log("No token found in sessionStorage");
@@ -17,41 +18,35 @@ const ProtectedRoute = ({ children }) => {
     }
 
     try {
-      const response = await axios.post(`/auths/verify`);
-
-      // Axios does not have response.ok like fetch; check for status instead
-      if (response.status !== 200) {
-        console.log("Response sttatus - ", response.status);
-      }
-
-      const data = response.data;
-      if (data) {
+      const response = await verifyToken();
+      if (response.status === 200) {
         return true;
       } else {
-        console.log("Token verification response invalid");
+        console.log("Response status - ", response.status);
+        return false;
       }
     } catch (err) {
       console.error("Token verification error:", err);
       localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       return false;
     }
   };
 
   useEffect(() => {
     const verifyAuth = async () => {
-      try {
-        const result = await checkAuth();
-        setIsAuthenticated(result);
-      } catch (error) {
-        setIsAuthenticated(false);
+      const result = await checkAuth();
+      if (result) {
+        getUserInfo(); // Only call this if authenticated
       }
+      setIsAuthenticated(result);
     };
 
     verifyAuth();
   }, []);
 
   if (isAuthenticated === null) {
-    // Show the loading spinner while checking authentication
+    console.log("Loading...");
     return (
       <Box
         display="flex"
@@ -63,6 +58,8 @@ const ProtectedRoute = ({ children }) => {
       </Box>
     );
   }
+
+  console.log("isAuthenticated:", isAuthenticated);
 
   return isAuthenticated ? children : <Navigate to="/login" />;
 };

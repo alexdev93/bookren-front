@@ -117,7 +117,7 @@ const baseChartOptions = {
 
 export default function EarningSummaryChart({ state }) {
   const theme = useTheme();
-  const { primary, secondary } = theme.palette.text;
+  const { secondary } = theme.palette.text;
   const line = theme.palette.divider;
   // const { transactions } = state;
 
@@ -237,7 +237,7 @@ export default function EarningSummaryChart({ state }) {
         ),
       },
     ]);
-  }, [transactions, secondary, line, isMobile, currentPage]);
+  }, [ secondary, line, isMobile, currentPage]);
 
   const handlePrevPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);

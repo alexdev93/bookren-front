@@ -1,4 +1,3 @@
-// src/components/ErrorBoundary.js
 import React, { Component } from "react";
 import { Typography, Box } from "@mui/material";
 
@@ -9,19 +8,16 @@ class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError() {
-    // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
   componentDidCatch(error, info) {
-    // You can also log error messages to an error reporting service here.
     console.error("Error occurred:", error);
     console.error("Error info:", info);
   }
 
   render() {
     if (this.state.hasError) {
-      // Render fallback UI
       return (
         <Box
           sx={{

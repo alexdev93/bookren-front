@@ -6,18 +6,18 @@ import reportWebVitals from "./reportWebVitals";
 import { theme } from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
 import { AppProvider } from "./AppContext";
-import { AxiosProvider } from "./contexts/AxiosContext";
+import { NotificationProvider } from "./Notification";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AxiosProvider>
+      <NotificationProvider>
+        <CssBaseline />
         <AppProvider>
           <App />
         </AppProvider>
-      </AxiosProvider>
+      </NotificationProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

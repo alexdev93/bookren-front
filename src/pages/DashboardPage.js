@@ -1,28 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import BookStatus from "../components/BookStatus";
-
 import EarningSummaryChart from "../components/EarningSummaryChart";
-
 import Sidebar from "../components/Sidebar";
 import { useAppContext } from "../AppContext";
 import StaticsComponent from "../components/StaticsComponent";
 
-const drawerWidth = 240;
-
 const DashboardPage = () => {
-  const { state, fetchBooks, getTransactions } = useAppContext();
+  const { state } = useAppContext();
   const { user } = state;
-
-  // useEffect(() => {
-  //   if (!user) {
-  //     return;
-  //   }
-
-  //   console.log(user, "this isidn")
-  //   fetchBooks();
-  //   getTransactions();
-  // }, [user]);
 
   return (
     <Sidebar>

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { appReducer, initialState } from "./AppReduer";
-import { useAxios } from "./contexts/AxiosContext";
-import {transactions} from './transaction.js'
+import { useAxios } from "./Axios/index.js";
+import { transactions } from "./transaction.js";
 
 export const AppContext = createContext(initialState);
 export const useAppContext = () => useContext(AppContext);
@@ -10,6 +10,14 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const axios = useAxios();
 
+  const getUserInfo = async () => {
+    const userInfo = JSON.parse(
+      localStorage.getItem("user") || sessionStorage.getItem("user")
+    );
+    console.log(userInfo, " user info from app context");
+    dispatch({ type: "STORE_USER_INFO", payload: userInfo });
+  };
+  
   const fetchBooks = async () => {
     dispatch({ type: "FETCH_BOOKS_REQUEST" });
     try {
@@ -21,16 +29,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-
-  const setUserState = (userInfo) => {
-    try {
-      localStorage.setItem("user", JSON.stringify(userInfo));
-      dispatch({ type: "FETCH_USER_INFO_SUCCESS", payload: userInfo });
-    } catch (error) {
-      console.error("Failed to set user info:", error);
-      dispatch({ type: "FETCH_USER_INFO_FAILURE" });
-    }
-  };
 
   const getTransactions = async () => {
     try {
@@ -57,7 +55,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ state, fetchBooks, setUserState, getTransactions, getAbilities }}
+      value={{ state, getUserInfo, fetchBooks, getTransactions, getAbilities }}
     >
       {children}
     </AppContext.Provider>
