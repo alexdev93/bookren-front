@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -7,16 +7,18 @@ import {
   Typography,
   Checkbox,
   FormControlLabel,
+  CircularProgress,
 } from "@mui/material";
-import { z } from "zod";
-import { registrationSchema } from "../utils/validationSchema";
-import { jwtDecode } from "jwt-decode";
 import RegisterPageWrapper from "../components/RegisterPageWrapper";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
-import { registerApi } from "../api";
+import Select from "react-select";
+import countryList from "react-select-country-list";
+import { useSignUp } from "./useSignUp";
 
 const Register = () => {
-  const [rememberMe, setRememberMe] = useState();
+  const { signup, loading, error } =
+    useSignUp();
+  const options = countryList().getData();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -26,40 +28,24 @@ const Register = () => {
     role: "owner",
   });
 
-  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target) {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        location: e.label,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      registrationSchema.parse(formData);
-
-      const { token } = await registerApi(formData);
-      localStorage.setItem("token", token);
-      const decodedToken = await jwtDecode(token);
-      console.log("Registered and authenticated:", decodedToken);
-      Navigate("/");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.errors.reduce((acc, curr) => {
-          acc[curr.path[0]] = curr.message;
-          return acc;
-        }, {});
-        setErrors(fieldErrors);
-      } else if (error.response) {
-        console.error("Registration error:", error.response.data);
-      } else if (error.request) {
-        console.error("Network error:", error.message);
-      } else {
-        console.error("Error:", error.message);
-      }
-    }
+    await signup(formData);
   };
 
   return (
@@ -102,8 +88,8 @@ const Register = () => {
             fullWidth
             value={formData.username}
             onChange={handleChange}
-            error={!!errors.username}
-            helperText={errors.username}
+            error={!!error.username}
+            helperText={error.username}
             sx={{ backgroundColor: "#fff" }}
           />
           <TextField
@@ -114,8 +100,8 @@ const Register = () => {
             fullWidth
             value={formData.password}
             onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
+            error={!!error.password}
+            helperText={error.password}
             sx={{ backgroundColor: "#fff" }}
           />
           <TextField
@@ -126,38 +112,33 @@ const Register = () => {
             fullWidth
             value={formData.email}
             onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
+            error={!!error.email}
+            helperText={error.email}
             sx={{ backgroundColor: "#fff" }}
           />
-          <TextField
-            label="Phone Number"
-            name="Phone Number"
-            variant="outlined"
-            fullWidth
+          <Select
+            options={options}
             value={formData.location}
             onChange={handleChange}
-            error={!!errors.location}
-            helperText={errors.location}
-            sx={{ backgroundColor: "#fff" }}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
-                checked={rememberMe}
+                checked={}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
             }
             label="I accept the terms and conditions"
-          />
+          /> */}
           <Button
             type="submit"
             variant="contained"
             color="primary"
             fullWidth
             sx={{ padding: 1 }}
+            disabled={loading}
           >
-            Register
+            {loading ? <CircularProgress size={20} /> : "Sign Up"}
           </Button>
           <Typography
             variant="body2"

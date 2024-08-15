@@ -10,13 +10,11 @@ import {
 } from "@mui/material";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import RegisterPageWrapper from "../components/RegisterPageWrapper";
-import { useLogin } from "./useLogin";
-import { useNavigate } from "react-router-dom";
+import { useSignIn } from "./useSignIn";
 
 const Login = () => {
-  const { login, rememberMe, setRememberMe, loading, error } = useLogin();
+  const { login, rememberMe, setRememberMe, loading, error } = useSignIn();
   const [formData, setFormData] = useState({ username: "", password: "" });
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +23,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData).then(() => navigate("/"));
+    await login(formData);
   };
 
   return (

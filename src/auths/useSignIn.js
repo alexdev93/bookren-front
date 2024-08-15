@@ -5,18 +5,18 @@ import { jwtDecode } from "jwt-decode";
 import { useNotification } from "../Notification";
 import { z } from "zod";
 import { loginApi } from "../api";
+import { useNavigate } from "react-router-dom";
 
-export const useLogin = () => {
+export const useSignIn = () => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
-  
   const login = async (formData) => {
     setLoading(true);
     setError({});
-
 
     try {
       loginSchema.parse(formData);
@@ -32,6 +32,7 @@ export const useLogin = () => {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("user", JSON.stringify(decodedToken));
         }
+        navigate("/");
       }
     } catch (error) {
       handleErrors(error);
@@ -51,7 +52,7 @@ export const useLogin = () => {
         "Validation error occurred. Please check the fields.",
         "error"
       );
-    } else if (error.response) {
+    } else if (error.response && error.response.status) {
       const message =
         error.response.data && error.response.data.message
           ? error.response.data.message
@@ -61,12 +62,11 @@ export const useLogin = () => {
       showNotification("Network error: " + error.message, "error");
     } else {
       showNotification(
-        "An unexpected error occurred: " + error.message,
+        "An unexpected error occurred: " + (error.message || "Unknown error"),
         "error"
       );
     }
   };
-
 
   return { login, loading, error, rememberMe, setRememberMe };
 };
