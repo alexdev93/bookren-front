@@ -10,7 +10,6 @@ import {
   FormControl,
   Paper
 } from "@mui/material";
-import { useAxios } from "../Axios"; // Import your custom hook
 
 const categories = [
   { id: 1, name: "Fiction" },
@@ -29,7 +28,6 @@ const BookUpload = () => {
     ownerId: "",
   });
 
-  const axios = useAxios();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,8 +40,8 @@ const BookUpload = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("/books", formValues);
-      console.log("Book uploaded successfully:", response.data);
+      // const response = await axios.post("/books", formValues);
+      // console.log("Book uploaded successfully:", response.data);
       setFormValues({})
     } catch (error) {
       console.error("Error uploading book:", error);
